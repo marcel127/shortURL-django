@@ -5,6 +5,6 @@ app_name = 'shorturl'
 
 urlpatterns = [
     path("create", include("shorturl.create.urls")),
-    path("", redirect_url, name="redirect_url"),
+    path("<str:short_url>", redirect_url, name="redirect_url"),
 
 ]

@@ -1,20 +1,21 @@
-from http.client import HTTPResponse
-
-import django
+from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
 from django.http import HttpResponse
-
-from django.http import HttpResponseRedirect
+from shorturl.models import URLEntry
+import rest_framework.status
 
 
 @csrf_exempt
-def redirect_url(request):
-    if request.method == "POST":
-        return HttpResponse("Hello World2", content_type="text/plain", status=200)
-    return HttpResponse("bad request", content_type="text/plain", status=400)
+def redirect_url(request, short_url):
+    try:
+        url_details = URLEntry.objects.get(unique_id=short_url)
+        url_details.count = url_details.count + 1
+        URLEntry.save()
+    except:
+        return HttpResponse(f"bad request, http://localhost/{short_url}, does not exist"
+                            , content_type="text/plain", status=rest_framework.status.HTTP_404_NOT_FOUND)
+
+    return redirect(url_details.original_url)
 
 
 
